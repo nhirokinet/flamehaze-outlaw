@@ -234,7 +234,7 @@ function get_user_submissions($user) {
 	$ret = array();
 
 	$stmt = $pdo->prepare('SELECT id, problem_id, user_id, language, source_code,
-			IF(judge_status LIKE "soft_%" OR judge_status LIKE "judging_%", "judging", judge_status) AS judge_status, execution_time, build_time, error_message, created_at,
+			IF(judge_status LIKE "soft_%" OR judge_status LIKE "judging_%", "judging", judge_status) AS judge_status, execution_time, memory_used_in_kb, build_time, error_message, created_at,
 			(SELECT title FROM problems WHERE problems.id=submissions.problem_id) AS problem_title
 			FROM submissions
 			WHERE user_id = :user_id

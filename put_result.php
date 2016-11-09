@@ -42,17 +42,20 @@ if ($result['status'] !== 'success') {
 
 	// TODO: soft status and hard status
 	// Note: important in case $result['status'] is soft_*
-	$stmt = $pdo->prepare('UPDATE submissions SET error_message = :errormsg , judge_status = :status , build_time = :buildtime , execution_time = :exetime , judge_end_time = NOW() WHERE id = :id');
+	$stmt = $pdo->prepare('UPDATE submissions SET error_message = :errormsg , judge_status = :status , build_time = :buildtime , execution_time = :exetime , memory_used_in_kb = :memory_used_in_kb, judge_end_time = NOW() WHERE id = :id');
 
 	$stmt->bindValue(':errormsg', array_key_exists('error_message', $result) ? substr($result['error_message'], 0, 1000) : '', PDO::PARAM_STR);
 	$stmt->bindValue(':buildtime', floor($result['build_time'] * 1000.0 + 0.5), PDO::PARAM_INT);
 
 	$longest_exec_time = 0;
+	$largest_mem_used  = -1;
 
 	foreach ($result['output_list'] as $output) {
 		$longest_exec_time = max($lognest_exec-time, $output['execution_time']);
+		$largest_mem_used  = max($largest_mem_used , $output['used_mem_kb']);
 	}
 	$stmt->bindValue(':exetime', floor($longest_exec_time * 1000.0 + 0.5), PDO::PARAM_INT);
+	$stmt->bindValue(':memory_used_in_kb', $largest_mem_used, PDO::PARAM_INT);
 	$stmt->bindValue(':status', $item_status, PDO::PARAM_STR);
 	$stmt->bindValue(':id', $result['submission_id'], PDO::PARAM_INT);
 	$stmt->execute();
@@ -69,6 +72,7 @@ while ($i = $stmt->fetch(PDO::FETCH_ASSOC)) {
 }
 
 $longest_exec_time = 0.0; // unit is second and type is float 
+$largest_mem_used  = 0;   // unit is kilobytes according to GNU time
 
 $status = 'accepted';
 
@@ -88,6 +92,7 @@ foreach ($test_cases as $test_case) {
 	$staus_in_exe = $output['status']; // TODO: assuming 'success'
 
 	$longest_exec_time = max($longest_exec_time, $exetime);
+	$largest_mem_used  = max($largest_mem_used , $output['used_mem_kb']);
 
 	if ($exetime > 5000) { // TODO: Here should not be hard-coded
 		$status = 'tle';
@@ -99,10 +104,11 @@ foreach ($test_cases as $test_case) {
 	}
 }
 
-$stmt = $pdo->prepare('UPDATE submissions SET error_message = :errormsg , judge_status = :status , build_time = :buildtime , execution_time = :exetime , judge_end_time = NOW() WHERE id = :id');
+$stmt = $pdo->prepare('UPDATE submissions SET error_message = :errormsg , judge_status = :status , build_time = :buildtime , execution_time = :exetime, memory_used_in_kb = :memory_used_in_kb, judge_end_time = NOW() WHERE id = :id');
 
 $stmt->bindValue(':errormsg', array_key_exists('error_message', $result) ? substr($result['error_message'], 0, 1000) : '', PDO::PARAM_STR);
 $stmt->bindValue(':buildtime', floor($result['build_time'] * 1000.0 + 0.5), PDO::PARAM_INT);
+$stmt->bindValue(':memory_used_in_kb', $largest_mem_used, PDO::PARAM_INT);
 $stmt->bindValue(':exetime', floor($longest_exec_time * 1000.0 + 0.5), PDO::PARAM_INT);
 $stmt->bindValue(':status', $status, PDO::PARAM_STR);
 $stmt->bindValue(':id', $result['submission_id'], PDO::PARAM_INT);
