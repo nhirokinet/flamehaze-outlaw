@@ -69,7 +69,7 @@ while($item = $stmt->fetch(PDO::FETCH_ASSOC)) {
 			'submission_id' => intval($item['id']),
 			'source_code' => $item['source_code'],
 			'language' => $item['language'],
-			'time_limit' => 5,
+			'time_limit' => $timelimit,
 			'input_list' => $test_cases,
 		       );
 	$await = false;
