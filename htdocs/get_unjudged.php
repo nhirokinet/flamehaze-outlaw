@@ -46,12 +46,22 @@ while($item = $stmt->fetch(PDO::FETCH_ASSOC)) {
 		$new_judge_status = 'judging_again';
 	}
 
+	$timelimit = 0;
+
 	$tstmt = $pdo->prepare('SELECT * FROM problem_test_cases WHERE problem_id = :problem_id ORDER BY id');
 	$tstmt->bindValue(':problem_id', $item['problem_id'], PDO::PARAM_INT);
 	$tstmt->execute();
 
 	while ($i = $tstmt->fetch(PDO::FETCH_ASSOC)) {
 		array_push($test_cases, $i['input_text']);
+	}
+
+	$problemstmt = $pdo->prepare('SELECT run_timelimit_seconds FROM problems WHERE id = :problem_id');
+	$problemstmt->bindValue(':problem_id', $item['problem_id'], PDO::PARAM_INT);
+	$problemstmt->execute();
+
+	while ($i = $problemstmt->fetch(PDO::FETCH_ASSOC)) {
+		$timelimit = $i['run_timelimit_seconds'];
 	}
 
 	$problem = array(

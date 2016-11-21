@@ -7,4 +7,3 @@ API specification is going to change later. Currently you should keep all the co
 
 The directory `htdocs` should be placed on document root. Remember you must edit config.php. 
 The file `sample-codes-for-test/sqldata/sample.sqldump` is MySQL dump data, with the problems in にろきプロコン#1. Note that in this contest input data for problem B had a problem, and some data are deleted, leading to the lack of random input data.  
-In the directory `sample-codes-for-test/sqldata/` you can also find scripts to initialize MySQL database with your problems, with sample problems.
