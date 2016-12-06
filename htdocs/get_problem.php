@@ -10,10 +10,12 @@ if (time() < $contest_start_time) {
 	exit;
 }
 
+$id = (array_key_exists('problem_id', $GLOBALS)) ? $GLOBALS['problem_id'] : (int)$_GET['id'];
+
 $problem = array();
 
 $stmt = $pdo->prepare('SELECT * FROM problems WHERE id = :id');
-$stmt->bindValue(':id', $_GET['id'], PDO::PARAM_INT);
+$stmt->bindValue(':id', $id, PDO::PARAM_INT);
 $stmt->execute();
 
 while($item = $stmt->fetch(PDO::FETCH_ASSOC)) {
