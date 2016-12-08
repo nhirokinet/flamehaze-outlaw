@@ -28,16 +28,12 @@ switch ($url) {
 		require_once(__DIR__ . '/impls/get_standings.php');
 		break;
 
-	case '/submit_code.json':
-		require_once(__DIR__ . '/impls/submit_code.php');
-		break;
-
 	case '/accounts/login.json':
 		require_once(__DIR__. '/impls/login.php');
 		break;
 
 	case '/accounts/logout.json':
-		require_once(__DIR__. '/impls/login.php');
+		require_once(__DIR__. '/impls/logout.php');
 		break;
 
 	case '/accounts/signup.json':
