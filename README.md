@@ -30,3 +30,5 @@ in conf file:
         }
 
 ```
+
+Note that you need to place all contents inside flamehaze-outlaw/htdocs should be placed to htdocs. Do not forget to edit config.php .
